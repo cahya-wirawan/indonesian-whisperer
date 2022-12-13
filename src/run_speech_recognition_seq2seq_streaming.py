@@ -52,6 +52,7 @@ from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
 
 from utils import load_dataset_combination
+from pathlib import Path
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.25.0.dev0")
@@ -136,6 +137,12 @@ class DataTrainingArguments:
     )
     dataset_data_dir: Optional[str] = field(
         default=None, metadata={"help": "The local data directory name of the dataset to use."}
+    )
+    dataset_min_filesize: Optional[int] = field(
+        default=5000, metadata={"help": "Minimal file size in bytes to consider a file for the dataset."}
+    )
+    dataset_min_textlength: Optional[int] = field(
+        default=5, metadata={"help": "Minimal text length in tokens to consider a file for the dataset."}
     )
     eval_dataset_name: str = field(
         default=None, metadata={"help": "The name of the dataset to use (via the datasets library)."}
@@ -378,6 +385,8 @@ def main():
             use_auth_token=True if model_args.use_auth_token else None,
             streaming=data_args.streaming,
             shuffle=data_args.shuffle,
+            dataset_min_filesize=data_args.dataset_min_filesize,
+            dataset_min_textlength=data_args.dataset_min_textlength,
         )
 
     if training_args.do_eval:

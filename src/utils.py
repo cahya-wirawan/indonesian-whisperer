@@ -1,8 +1,13 @@
 from datasets import load_dataset, concatenate_datasets
+from pathlib import Path
 
+
+def min_filesize_and_textlength(row, filesize, textlength):
+    return (Path(row['path']).stat().st_size >= filesize) and (len(row['sentence']) >= textlength)
 
 def load_dataset_combination(dataset_name, dataset_config_name, split="train", dataset_data_dir="",
-                             streaming=True, shuffle=False, seed=42, **kwargs):
+                             streaming=True, shuffle=False, seed=42,
+                             dataset_min_filesize=0, dataset_min_textlength=0, **kwargs):
     """
     Utility function to load a dataset in streaming mode. For datasets with multiple splits,
     each split is loaded individually and then splits combined by taking alternating examples from
@@ -38,6 +43,12 @@ def load_dataset_combination(dataset_name, dataset_config_name, split="train", d
                                     data_dir=dataset_data_dir[i], streaming=streaming, **kwargs)]
             dataset_combination += dataset
     dataset_combination = concatenate_datasets(dataset_combination)
+    if dataset_min_filesize != 0 or dataset_min_textlength != 0:
+        dataset_combination = dataset_combination.filter(min_filesize_and_textlength,
+                                             fn_kwargs={
+                                                 "filesize": dataset_min_filesize,
+                                                 "textlength": dataset_min_textlength
+                                             })
     if shuffle:
         dataset_combination = dataset_combination.shuffle(seed=seed)
     return dataset_combination
