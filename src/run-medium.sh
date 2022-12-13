@@ -4,6 +4,7 @@ python run_speech_recognition_seq2seq_streaming.py \
 --dataset_config_name="id, id, id, id" \
 --dataset_data_dir=",/dataset/ASR/indonesian/Indonesian_Scripted_Speech_Corpus_Daily_Use_Sentence,/dataset/ASR/indonesian/Indonesian_Conversational_Speech_Corpus_Split,/dataset/ASR/indonesian/TITML-IDN" \
 --shuffle="True" \
+--streaming="False" \
 --language="indonesian" \
 --train_split_name="train+validation+other" \
 --eval_dataset_name="mozilla-foundation/common_voice_11_0" \
