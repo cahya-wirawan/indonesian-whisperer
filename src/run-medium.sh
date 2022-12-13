@@ -1,0 +1,41 @@
+python run_speech_recognition_seq2seq_streaming.py \
+--model_name_or_path="openai/whisper-medium" \
+--dataset_name="mozilla-foundation/common_voice_11_0, local_datasets/magic_data, local_datasets/magic_data, local_datasets/titml" \
+--dataset_config_name="id, id, id, id" \
+--dataset_data_dir=",/dataset/ASR/indonesian/Indonesian_Scripted_Speech_Corpus_Daily_Use_Sentence,/dataset/ASR/indonesian/Indonesian_Conversational_Speech_Corpus_Split,/dataset/ASR/indonesian/TITML-IDN" \
+--shuffle="True" \
+--language="indonesian" \
+--train_split_name="train+validation+other" \
+--eval_dataset_name="mozilla-foundation/common_voice_11_0" \
+--eval_dataset_config_name="id" \
+--eval_split_name="test" \
+--model_index_name="Whisper Medium Indonesian" \
+--max_steps="5000" \
+--output_dir="./" \
+--per_device_train_batch_size="32" \
+--per_device_eval_batch_size="32" \
+--logging_steps="25" \
+--learning_rate="1e-5" \
+--warmup_steps="500" \
+--evaluation_strategy="steps" \
+--eval_steps="1000" \
+--save_strategy="steps" \
+--save_steps="1000" \
+--generation_max_length="225" \
+--length_column_name="input_length" \
+--max_duration_in_seconds="30" \
+--text_column_name="sentence" \
+--freeze_feature_encoder="False" \
+--report_to="tensorboard" \
+--metric_for_best_model="wer" \
+--greater_is_better="False" \
+--load_best_model_at_end \
+--gradient_checkpointing \
+--fp16 \
+--overwrite_output_dir \
+--do_train \
+--do_eval \
+--predict_with_generate \
+--do_normalize_eval \
+--use_auth_token \
+--push_to_hub
