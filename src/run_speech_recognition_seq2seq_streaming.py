@@ -394,7 +394,7 @@ def main():
             else data_args.dataset_name
         data_args.eval_dataset_config_name = data_args.eval_dataset_config_name if data_args.eval_dataset_config_name \
             else data_args.dataset_config_name
-        data_args.eval_dataset_data_dir = data_args.eval_dataset_data_dir if data_args.eval_dataset_data_dir \
+        data_args.eval_dataset_data_dir = data_args.eval_dataset_data_dir if data_args.eval_dataset_data_dir != None \
             else data_args.dataset_data_dir
         raw_datasets["eval"] = load_dataset_combination(
             data_args.eval_dataset_name,
