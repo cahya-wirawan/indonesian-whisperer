@@ -371,6 +371,7 @@ def main():
             data_args.dataset_name,
             data_args.dataset_config_name,
             split=data_args.train_split_name,
+            dataset_data_dir=data_args.dataset_data_dir,
             use_auth_token=True if model_args.use_auth_token else None,
             streaming=data_args.streaming,
             shuffle=data_args.shuffle,
@@ -385,6 +386,7 @@ def main():
             data_args.eval_dataset_name,
             data_args.eval_dataset_config_name,
             split=data_args.eval_split_name,
+            dataset_data_dir=data_args.dataset_data_dir,
             use_auth_token=True if model_args.use_auth_token else None,
             streaming=data_args.streaming,
         )
