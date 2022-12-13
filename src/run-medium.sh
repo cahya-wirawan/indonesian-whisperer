@@ -1,5 +1,5 @@
 python run_speech_recognition_seq2seq_streaming.py \
---model_name_or_path="openai/whisper-medium" \
+--model_name_or_path="cahya/whisper-medium-id" \
 --dataset_name="mozilla-foundation/common_voice_11_0, local_datasets/magic_data, local_datasets/magic_data, local_datasets/titml" \
 --dataset_config_name="id, id, id, id" \
 --dataset_data_dir=",/dataset/ASR/indonesian/Indonesian_Scripted_Speech_Corpus_Daily_Use_Sentence,/dataset/ASR/indonesian/Indonesian_Conversational_Speech_Corpus_Split,/dataset/ASR/indonesian/TITML-IDN" \
@@ -12,7 +12,7 @@ python run_speech_recognition_seq2seq_streaming.py \
 --eval_split_name="test" \
 --model_index_name="Whisper Medium Indonesian" \
 --max_steps="5000" \
---output_dir="./" \
+--output_dir="./whisper-medium-id" \
 --per_device_train_batch_size="32" \
 --per_device_eval_batch_size="32" \
 --logging_steps="25" \
