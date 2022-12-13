@@ -10,6 +10,7 @@ python run_speech_recognition_seq2seq_streaming.py \
 --eval_dataset_name="mozilla-foundation/common_voice_11_0" \
 --eval_dataset_config_name="id" \
 --eval_split_name="test" \
+--eval_dataset_data_dir="" \
 --model_index_name="Whisper Medium Indonesian" \
 --max_steps="5000" \
 --output_dir="./whisper-medium-id" \

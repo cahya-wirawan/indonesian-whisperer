@@ -143,6 +143,9 @@ class DataTrainingArguments:
     eval_dataset_config_name: Optional[str] = field(
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
     )
+    eval_dataset_data_dir: Optional[str] = field(
+        default=None, metadata={"help": "The local data directory name of the dataset to use."}
+    )
     text_column: Optional[str] = field(
         default=None,
         metadata={"help": "The name of the column in the datasets containing the full texts (for summarization)."},
@@ -382,11 +385,13 @@ def main():
             else data_args.dataset_name
         data_args.eval_dataset_config_name = data_args.eval_dataset_config_name if data_args.eval_dataset_config_name \
             else data_args.dataset_config_name
+        data_args.eval_dataset_data_dir = data_args.eval_dataset_data_dir if data_args.eval_dataset_data_dir \
+            else data_args.dataset_data_dir
         raw_datasets["eval"] = load_dataset_combination(
             data_args.eval_dataset_name,
             data_args.eval_dataset_config_name,
             split=data_args.eval_split_name,
-            dataset_data_dir=data_args.dataset_data_dir,
+            dataset_data_dir=data_args.eval_dataset_data_dir,
             use_auth_token=True if model_args.use_auth_token else None,
             streaming=data_args.streaming,
         )
