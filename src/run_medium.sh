@@ -6,7 +6,7 @@ python run_speech_recognition_seq2seq_streaming.py \
 --shuffle="True" \
 --streaming="False" \
 --language="indonesian" \
---train_split_name="train+validation+other" \
+--train_split_name="train+validation+other, train, train, train" \
 --eval_dataset_name="mozilla-foundation/common_voice_11_0" \
 --eval_dataset_config_name="id" \
 --eval_split_name="test" \
