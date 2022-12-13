@@ -86,7 +86,7 @@ class MagicData(datasets.GeneratorBasedBuilder):
             {
                 "path": datasets.Value("string"),
                 "sentence": datasets.Value("string"),
-                "audio": datasets.features.Audio(sampling_rate=48_000),
+                "audio": datasets.features.Audio(sampling_rate=16_000),
             }
         )
 

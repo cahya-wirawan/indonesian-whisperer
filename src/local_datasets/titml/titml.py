@@ -86,6 +86,7 @@ class MagicData(datasets.GeneratorBasedBuilder):
             {
                 "path": datasets.Value("string"),
                 "sentence": datasets.Value("string"),
+                "audio": datasets.features.Audio(sampling_rate=16_000),
             }
         )
 
@@ -96,9 +97,6 @@ class MagicData(datasets.GeneratorBasedBuilder):
             homepage=_HOMEPAGE,
             license=_LICENSE,
             citation=_CITATION,
-            task_templates=[
-                AutomaticSpeechRecognition(audio_file_path_column="path", transcription_column="sentence")
-            ],
         )
 
     def _split_generators(self, dl_manager):
@@ -133,13 +131,17 @@ class MagicData(datasets.GeneratorBasedBuilder):
                 for id_, line in enumerate(lines):
                     sentence_index[line[0:3]] = line[5:].strip()
             for path_to_soundfile in sorted(Path(path_to_data).rglob("*.wav")):
+                result = {}
                 filename = path_to_soundfile.stem
                 _, sentence_id = filename.split("-")
                 if sentence_id not in sentence_index:
                     continue
                 path = str(path_to_soundfile.resolve())
-                sentence = sentence_index[sentence_id]
                 counter += 1
-                yield counter, {"path": path, "sentence": sentence}
+                result["path"] = path
+                with open(path, "rb") as file:
+                    result["audio"] = {"path": path, "bytes": file.read()}
+                result["sentence"] = sentence_index[sentence_id]
+                yield path, result
         else:
             pass
