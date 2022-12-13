@@ -134,6 +134,9 @@ class DataTrainingArguments:
     dataset_config_name: Optional[str] = field(
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
     )
+    dataset_data_dir: Optional[str] = field(
+        default=None, metadata={"help": "The local data directory name of the dataset to use."}
+    )
     eval_dataset_name: str = field(
         default=None, metadata={"help": "The name of the dataset to use (via the datasets library)."}
     )
