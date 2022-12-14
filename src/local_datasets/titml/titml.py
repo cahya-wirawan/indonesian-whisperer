@@ -80,6 +80,7 @@ class MagicData(datasets.GeneratorBasedBuilder):
         )
         for lang_id in _LANGUAGES.keys()
     ]
+    MIN_FILE_SIZE = 5000
 
     def _info(self):
         features = datasets.Features(
@@ -136,7 +137,10 @@ class MagicData(datasets.GeneratorBasedBuilder):
                 _, sentence_id = filename.split("-")
                 if sentence_id not in sentence_index:
                     continue
-                path = str(path_to_soundfile.resolve())
+                path = path_to_soundfile.resolve()
+                if path.stat().st_size <= self.MIN_FILE_SIZE:
+                    continue
+                path = str(path)
                 counter += 1
                 result["path"] = path
                 with open(path, "rb") as file:

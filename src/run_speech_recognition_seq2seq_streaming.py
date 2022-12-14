@@ -139,10 +139,10 @@ class DataTrainingArguments:
         default=None, metadata={"help": "The local data directory name of the dataset to use."}
     )
     dataset_min_filesize: Optional[int] = field(
-        default=5000, metadata={"help": "Minimal file size in bytes to consider a file for the dataset."}
+        default=0, metadata={"help": "Minimal file size in bytes to consider a file for the dataset."}
     )
     dataset_min_textlength: Optional[int] = field(
-        default=5, metadata={"help": "Minimal text length in tokens to consider a file for the dataset."}
+        default=0, metadata={"help": "Minimal text length in tokens to consider a file for the dataset."}
     )
     eval_dataset_name: str = field(
         default=None, metadata={"help": "The name of the dataset to use (via the datasets library)."}
