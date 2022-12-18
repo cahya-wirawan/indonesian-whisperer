@@ -9,7 +9,7 @@ def min_filesize_and_textlength(row, filesize, textlength):
     return (Path(row['path']).stat().st_size >= filesize) and (len(row['sentence']) >= textlength)
 
 
-def load_dataset_combination(dataset_name, dataset_config_name, split="train", dataset_data_dir="",
+def load_dataset_combination(dataset_name, dataset_config_name, split="train", dataset_data_dir=None,
                              streaming=True, shuffle=False, seed=42,
                              dataset_min_filesize=0, dataset_min_textlength=0, **kwargs):
     """
@@ -19,8 +19,11 @@ def load_dataset_combination(dataset_name, dataset_config_name, split="train", d
     """
     dataset_name = [dn.strip() for dn in dataset_name.split(",")]
     dataset_config_name = [dcn.strip() for dcn in dataset_config_name.split(",")]
-    dataset_data_dir = [dataset_data_dir.strip() if len(dataset_data_dir) != 0 else None
-                        for dataset_data_dir in dataset_data_dir.split(",")]
+    if dataset_data_dir is not None:
+        dataset_data_dir = [dataset_data_dir.strip() if len(dataset_data_dir) != 0 else None
+                            for dataset_data_dir in dataset_data_dir.split(",")]
+    else:
+        dataset_data_dir = [None for _ in dataset_name]
     split = [sp.strip() for sp in split.split(",")]
     print("dataset_name:", dataset_name)
     print("dataset_config_name:", dataset_config_name)
