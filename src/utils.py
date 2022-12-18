@@ -9,8 +9,31 @@ def min_filesize_and_textlength(row, filesize, textlength):
     return (Path(row['path']).stat().st_size >= filesize) and (len(row['sentence']) >= textlength)
 
 
-def load_dataset_combination(dataset_name, dataset_config_name, split="train", dataset_data_dir="",
-                             streaming=True, shuffle=False, seed=42,
+def rename_remove_keys(dataset_keys, dataset, rename_columns, streaming, i):
+    try:
+        print("rename_columns[i]:", i, rename_columns[i])
+        for columns in rename_columns[i]:
+            print("columns:", columns)
+            if columns != "":
+                old_column, new_column = columns.split(":")
+                print(f"Renaming column '{old_column}' to '{new_column}'")
+                dataset = dataset.rename_column(old_column, new_column)
+        current_keys = set(next(iter(dataset)).keys()) if streaming else set(dataset[0].keys())
+        print("current_keys:", current_keys)
+        if dataset_keys is None:
+            dataset_keys = current_keys
+        elif i != 0:
+            ds_keys = current_keys - dataset_keys
+            if len(ds_keys) != 0:
+                print("Removing keys:", ds_keys)
+                # dataset = dataset.remove_columns(list(ds_keys))
+    except IndexError:
+        print("Empty dataset")
+    return dataset_keys, dataset
+
+
+def load_dataset_combination(dataset_name, dataset_config_name, split="train", dataset_data_dir=None,
+                             rename_columns=None, streaming=True, shuffle=False, seed=42,
                              dataset_min_filesize=0, dataset_min_textlength=0, **kwargs):
     """
     Utility function to load a dataset in streaming mode. For datasets with multiple splits,
@@ -19,9 +42,18 @@ def load_dataset_combination(dataset_name, dataset_config_name, split="train", d
     """
     dataset_name = [dn.strip() for dn in dataset_name.split(",")]
     dataset_config_name = [dcn.strip() for dcn in dataset_config_name.split(",")]
-    dataset_data_dir = [dataset_data_dir.strip() if len(dataset_data_dir) != 0 else None
-                        for dataset_data_dir in dataset_data_dir.split(",")]
+    if dataset_data_dir is not None:
+        dataset_data_dir = [dataset_data_dir.strip() if len(dataset_data_dir) != 0 else None
+                            for dataset_data_dir in dataset_data_dir.split(",")]
+    else:
+        dataset_data_dir = [None for _ in dataset_name]
     split = [sp.strip() for sp in split.split(",")]
+    print("rename_columns:", rename_columns)
+    if rename_columns is not None:
+        rename_columns = [rc.strip() for rc in rename_columns.split(",")]
+        rename_columns = [rc.split(";") for rc in rename_columns]
+    else:
+        rename_columns = [None for _ in dataset_name]
     print("dataset_name:", dataset_name)
     print("dataset_config_name:", dataset_config_name)
     print("dataset_data_dir:", dataset_data_dir)
@@ -31,22 +63,26 @@ def load_dataset_combination(dataset_name, dataset_config_name, split="train", d
         raise ValueError(
             "dataset_name, dataset_config_name, dataset_data_dir, and split must have the same number of elements")
     dataset_combination = []
+    dataset_keys = None
     for i in range(len(dataset_name)):
         print("dataset_name[i]:", i, dataset_name[i])
         print("dataset_data_dir[i]:", i, dataset_data_dir[i])
         if "+" in split[i]:
             # load multiple splits separated by the `+` symbol with streaming mode
-            dataset_splits = [
-                load_dataset(dataset_name[i], dataset_config_name[i], split=split_name,
-                             data_dir=dataset_data_dir[i], streaming=streaming, **kwargs)
-                for split_name in split[i].split("+")
-            ]
+            dataset_splits = []
+            for split_name in split[i].split("+"):
+                dataset = load_dataset(dataset_name[i], dataset_config_name[i], split=split_name,
+                                       data_dir=dataset_data_dir[i], streaming=streaming, **kwargs)
+                dataset_keys, dataset = rename_remove_keys(dataset_keys, dataset, rename_columns, streaming, i)
+                dataset_splits.append(dataset)
             dataset_combination += dataset_splits
         else:
             # load a single split *with* streaming mode
-            dataset = [load_dataset(dataset_name[i], dataset_config_name[i], split=split[i],
-                                    data_dir=dataset_data_dir[i], streaming=streaming, **kwargs)]
-            dataset_combination += dataset
+            dataset = load_dataset(dataset_name[i], dataset_config_name[i], split=split[i],
+                                   data_dir=dataset_data_dir[i], streaming=streaming, **kwargs)
+            dataset_keys, dataset = rename_remove_keys(dataset_keys, dataset, rename_columns, streaming, i)
+            dataset_combination += [dataset]
+
     dataset_combination = concatenate_datasets(dataset_combination)
     if not streaming and (dataset_min_filesize != 0 or dataset_min_textlength != 0):
         dataset_combination = dataset_combination.filter(
@@ -83,6 +119,7 @@ WHISPER_MAPPING = {
     "decoder.embed_positions.weight": "decoder.positional_embedding",
     "layer_norm": "ln_post",
 }
+
 
 ###
 # The code to convert hf to whisper copied from https://github.com/bayartsogt-ya/whisper-multiple-hf-datasets
