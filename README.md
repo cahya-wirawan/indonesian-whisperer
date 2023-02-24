@@ -1,9 +1,12 @@
 # Indonesian Whisperer
-Experiment with OpenAI Whisper on Indonesian Languages
+Experiment with OpenAI Whisper on Indonesian Languages. 
+
 
 ## OpenAI Whisper
 
 ## Development
+Try the [Demo of our Speech Recognition models](https://huggingface.co/spaces/cahya/indonesian-whisperer). 
+The inference is running on NVidia T4, which is provided generously by [Huggingface](https://huggingface.co/) for free.
 
 ### Dependencies Installation
 
